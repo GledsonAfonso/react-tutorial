@@ -2,6 +2,31 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
+const calculateWinner = (squares) => {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  let winner = undefined;
+  lines.forEach(coordenates => {
+    const [a, b, c] = coordenates;
+
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      winner = squares[a];
+      return;
+    }
+  });
+
+  return winner;
+};
+
 const Square = (props) => {
   return (
     <button className="square" onClick={props.onClick}>
@@ -20,6 +45,10 @@ class Board extends React.Component {
   }
 
   handleClick(i) {
+    if (calculateWinner(this.state.squares)) {
+      return;
+    }
+
     const squares = this.state.squares.slice();
     squares[i] = this.state.isXNext ? 'X' : 'O';
     this.setState({ squares: squares, isXNext: !this.state.isXNext });
@@ -35,7 +64,8 @@ class Board extends React.Component {
   }
 
   render() {
-    const status = `Next player: ${this.state.isXNext ? 'X' : 'O'}`;
+    const winner = calculateWinner(this.state.squares);
+    const status = winner ? `Winner: ${winner}` : `Next player: ${this.state.isXNext ? 'X' : 'O'}`;
 
     return (
       <div>
